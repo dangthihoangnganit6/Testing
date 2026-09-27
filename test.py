@@ -1,78 +1,160 @@
-# chay_kiem_thu.py
-from main import tinh_tien_ve, tinh_cuoc_ship
+import re
+from main import calculate_movie_ticket, calculate_shipping_fee
 
-# Bộ test case Robust BVA cho Bài 1 (Vé xem phim)
-test_ve_phim = [
-    ("TC01", 0, 5, "INVALID"),
-    ("TC02", 1, 5, "Không đủ tuổi"),
-    ("TC03", 2, 5, "Không đủ tuổi"),
-    ("TC04", 17, 5, "Không đủ tuổi"),
-    ("TC05", 18, 5, 250000),
-    ("TC06", 19, 5, 250000),
-    ("TC07", 21, 5, 250000),
-    ("TC08", 22, 5, 250000),
-    ("TC09", 23, 5, 400000),
-    ("TC10", 99, 5, 400000),
-    ("TC11", 100, 5, 400000),
-    ("TC12", 101, 5, "INVALID"),
-    ("TC13", 50, 0, "INVALID"),
-    ("TC14", 50, 1, 80000),
-    ("TC15", 50, 2, 160000),
-    ("TC16", 50, 9, 720000),
-    ("TC17", 50, 10, 800000),
-    ("TC18", 50, 11, "INVALID"),
-    ("TC19", 50, 5, 400000),
+def normalize_output(text):
+    """
+    Chuẩn hóa kết quả đầu ra:
+    Nếu output có dạng 'tổng tiền = [công thức] = [số tiền] ...',
+    chuyển về dạng gọn 'tổng tiền = [số tiền] ...' để so sánh chính xác với kết quả hàm.
+    """
+    match = re.search(r"tổng tiền = .*?=\s*(\d+)(.*)", text)
+    if match:
+        amount = match.group(1)
+        suffix = match.group(2).strip()
+        if suffix:
+            return f"tổng tiền = {amount} {suffix}"
+        return f"tổng tiền = {amount}"
+    return text.strip()
+
+
+# ==========================================
+# TEST CASES BÀI TOÁN 1
+# ==========================================
+test_cases_bai1 = [
+    {
+        "id": "TC1",
+        "class": "O1",
+        "inputs": (-5, 5, 2),
+        "expected": "INVALID"
+    },
+    {
+        "id": "TC2",
+        "class": "O2",
+        "inputs": (9, 5, 2),
+        "expected": "Không đủ tuổi"
+    },
+    {
+        "id": "TC3",
+        "class": "O3",
+        "inputs": (20, 2, 2),
+        "expected": "tổng tiền = 2 x (50000 + 2 x 10000) = 140000"
+    },
+    {
+        "id": "TC4",
+        "class": "O4",
+        "inputs": (20, 5, 2),
+        "expected": "tổng tiền = 5 x (50000 + 2 x 10000) = 350000 và thông báo tặng bắp"
+    },
+    {
+        "id": "TC5",
+        "class": "O5",
+        "inputs": (20, 9, 2),
+        "expected": "tổng tiền = 9 x (50000 + 2 x 10000) = 630000 và thông báo tặng combo"
+    },
+    {
+        "id": "TC6",
+        "class": "O6",
+        "inputs": (61, 2, 2),
+        "expected": "tổng tiền = 2 x (80000 + 2 x 10000) = 200000"
+    },
+    {
+        "id": "TC7",
+        "class": "O7",
+        "inputs": (61, 5, 2),
+        "expected": "tổng tiền = 5 x (80000 + 2 x 10000) = 500000 và thông báo tặng bắp"
+    },
+    {
+        "id": "TC8",
+        "class": "O8",
+        "inputs": (61, 9, 2),
+        "expected": "tổng tiền = 9 x (80000 + 2 x 10000) = 900000 và thông báo tặng combo"
+    }
 ]
 
-# Bộ test case Robust BVA cho Bài 2 (Phí ship)
-test_cuoc_ship = [
-    ("TC01", 0.0, 25.0, "INVALID"),
-    ("TC02", 0.1, 25.0, 125000.0),
-    ("TC03", 0.2, 25.0, 125000.0),
-    ("TC04", 4.9, 25.0, 125000.0),
-    ("TC05", 5.0, 25.0, 125000.0),
-    ("TC06", 5.1, 25.0, 175000.0),
-    ("TC07", 29.9, 25.0, 175000.0),
-    ("TC08", 30.0, 25.0, 175000.0),
-    ("TC09", 30.1, 25.0, "INVALID"),
-    ("TC10", 15.0, 0.9, "INVALID"),
-    ("TC11", 15.0, 1.0, 7000.0),
-    ("TC12", 15.0, 1.1, 7700.0),
-    ("TC13", 15.0, 49.9, 349300.0),
-    ("TC14", 15.0, 50.0, 350000.0),
-    ("TC15", 15.0, 50.1, "INVALID"),
-    ("TC16", 15.0, 25.0, 175000.0),
+
+# ==========================================
+# TEST CASES BÀI TOÁN 2
+# ==========================================
+test_cases_bai2 = [
+    {
+        "id": "TC1",
+        "class": "O1",
+        "inputs": (-2.0, 25.5, 2, 50),
+        "expected": "INVALID"
+    },
+    {
+        "id": "TC2",
+        "class": "O2",
+        "inputs": (40.0, 25.5, 2, 50),
+        "expected": "Quá tải trọng"
+    },
+    {
+        "id": "TC3",
+        "class": "O3",
+        "inputs": (2.5, 10.5, 2, 50),
+        "expected": "tổng tiền = 10.5 x (5000 + 2 x 2000) + 50 x 10000 = 594500"
+    },
+    {
+        "id": "TC4",
+        "class": "O4",
+        "inputs": (2.5, 35.0, 2, 50),
+        "expected": "tổng tiền = 35.0 x (5000 + 2 x 2000) + 50 x 10000 - 20000 = 795000"
+    },
+    {
+        "id": "TC5",
+        "class": "O5",
+        "inputs": (17.5, 10.5, 2, 50),
+        "expected": "tổng tiền = 10.5 x (7000 + 2 x 2000) + 50 x 10000 = 615500"
+    },
+    {
+        "id": "TC6",
+        "class": "O6",
+        "inputs": (17.5, 35.0, 2, 50),
+        "expected": "tổng tiền = 35.0 x (7000 + 2 x 2000) + 50 x 10000 - 20000 = 865000"
+    }
 ]
 
-def kiem_tra():
-    print("=" * 60)
-    print("BẮT ĐẦU CHẠY BỘ KIỂM THỬ")
-    print("=" * 60)
-    
-    so_loi_phat_hien = 0
 
-    # Chạy kiểm thử bài 1
-    print("\nKIỂM THỬ BÀI 1: TÍNH TIỀN VÉ")
-    for ma_tc, tuoi, sl, mong_doi in test_ve_phim:
-        thuc_te = tinh_tien_ve(tuoi, sl)
-        if thuc_te != mong_doi:
-            so_loi_phat_hien += 1
-            print(f"[CẢNH BÁO LỖI] {ma_tc} Thất bại! Đầu vào: (tuổi={tuoi}, sl={sl}) | Thực tế: {thuc_te} != Kỳ vọng: {mong_doi}")
+def run_tests():
+    print("=" * 90)
+    print("CHẠY KIỂM THỬ BÀI TOÁN 1: HỆ THỐNG ĐẶT VÉ XEM PHIM")
+    print("=" * 90)
+    bai1_passed = 0
+    for tc in test_cases_bai1:
+        actual = calculate_movie_ticket(*tc["inputs"])
+        expected_norm = normalize_output(tc["expected"])
+        actual_norm = normalize_output(actual)
+        passed = (actual_norm == expected_norm)
+        if passed:
+            bai1_passed += 1
 
-    # Chạy kiểm thử bài 2
-    print("\nKIỂM THỬ BÀI 2: TÍNH PHÍ SHIP")
-    for ma_tc, kl, kc, mong_doi in test_cuoc_ship:
-        thuc_te = tinh_cuoc_ship(kl, kc)
-        if thuc_te != mong_doi:
-            so_loi_phat_hien += 1
-            print(f"[CẢNH BÁO LỖI] {ma_tc} Thất bại! Đầu vào: (khối lượng={kl}, khoảng cách={kc}) | Thực tế: {thuc_te} != Kỳ vọng: {mong_doi}")
+        status = "PASS" if passed else "FAIL"
+        print(f"[{tc['id']} - {tc['class']}] Input: {tc['inputs']} -> Status: {status}")
+        print(f"   Expected: {expected_norm}")
+        print(f"   Actual:   {actual_norm}")
+        print("-" * 90)
+    print(f"Tổng kết Bài toán 1: {bai1_passed}/{len(test_cases_bai1)} test cases PASSED\n")
 
-    print("\n" + "=" * 60)
-    if so_loi_phat_hien == 0:
-        print("KẾT QUẢ: 100% TEST CASE PASS (Code hiện tại không bị phát hiện lỗi).")
-    else:
-        print(f"KẾT QUẢ: BỘ TEST ĐÃ BẮT ĐƯỢC {so_loi_phat_hien} ĐIỂM BẤT THƯỜNG (Mutant bị tiêu diệt)!")
-    print("=" * 60)
+    print("=" * 90)
+    print("CHẠY KIỂM THỬ BÀI TOÁN 2: HỆ THỐNG TÍNH CƯỚC VẬN CHUYỂN HÀNG")
+    print("=" * 90)
+    bai2_passed = 0
+    for tc in test_cases_bai2:
+        actual = calculate_shipping_fee(*tc["inputs"])
+        expected_norm = normalize_output(tc["expected"])
+        actual_norm = normalize_output(actual)
+        passed = (actual_norm == expected_norm)
+        if passed:
+            bai2_passed += 1
+
+        status = "PASS" if passed else "FAIL"
+        print(f"[{tc['id']} - {tc['class']}] Input: {tc['inputs']} -> Status: {status}")
+        print(f"   Expected: {expected_norm}")
+        print(f"   Actual:   {actual_norm}")
+        print("-" * 90)
+    print(f"Tổng kết Bài toán 2: {bai2_passed}/{len(test_cases_bai2)} test cases PASSED")
+    print("=" * 90)
+
 
 if __name__ == "__main__":
-    kiem_tra()
+    run_tests()
