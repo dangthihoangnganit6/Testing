@@ -33,6 +33,19 @@ ep_test_cases_bai1 = [
     {"id": "EP_TC8", "class": "O8", "inputs": (61, 9, 2), "expected": "tổng tiền = 9 x (80000 + 2 x 10000) = 900000 và thông báo tặng combo"},
 ]
 
+bqd_test_cases_bai1 = [
+    {"id": "bqd_TC1", "class": "O1", "inputs": (-5, 5, 2), "expected": "INVALID"},
+    {"id": "bqd_TC1", "class": "O2", "inputs": (50, 15, 2), "expected": "INVALID"},
+    {"id": "bqd_TC1", "class": "O3", "inputs": (50, 5, 4), "expected": "INVALID"},
+    {"id": "bqd_TC2", "class": "O4", "inputs": (9, 5, 2), "expected": "Không đủ tuổi"},
+    {"id": "bqd_TC3", "class": "O5", "inputs": (20, 2, 2), "expected": "tổng tiền = 2 x (50000 + 2 x 10000) = 140000"},
+    {"id": "bqd_TC4", "class": "O6", "inputs": (20, 5, 2), "expected": "tổng tiền = 5 x (50000 + 2 x 10000) = 350000 và thông báo tặng bắp"},
+    {"id": "bqd_TC5", "class": "O7", "inputs": (20, 9, 2), "expected": "tổng tiền = 9 x (50000 + 2 x 10000) = 630000 và thông báo tặng combo"},
+    {"id": "bqd_TC6", "class": "O8", "inputs": (61, 2, 2), "expected": "tổng tiền = 2 x (80000 + 2 x 10000) = 200000"},
+    {"id": "bqd_TC7", "class": "O9", "inputs": (61, 5, 2), "expected": "tổng tiền = 5 x (80000 + 2 x 10000) = 500000 và thông báo tặng bắp"},
+    {"id": "bqd_TC8", "class": "10", "inputs": (61, 9, 2), "expected": "tổng tiền = 9 x (80000 + 2 x 10000) = 900000 và thông báo tặng combo"},
+]
+
 # 1.2. Test cases Kiểm thử giá trị biên (BVA)
 bva_test_cases_bai1 = [
     {"id": "BVA_TC1", "inputs": (0, 5, 2), "expected": "INVALID"},
@@ -81,7 +94,19 @@ ep_test_cases_bai2 = [
     {"id": "EP_TC6", "class": "O6", "inputs": (17.5, 35.0, 2, 50), "expected": "tổng tiền = 35.0 x (7000 + 2 x 2000) + 50 x 10000 - 20000 = 865000"},
 ]
 
-# 2.2. Test cases Kiểm thử giá trị biên (BVA)
+bqd_test_cases_bai2 = [
+    {"id": "EP_TC1", "class": "O1", "inputs": (-2.0, 25.5, 2, 50), "expected": "INVALID"},
+    {"id": "EP_TC1", "class": "O2", "inputs": (25.5, 60.0, 2, 50), "expected": "INVALID"},
+    {"id": "EP_TC1", "class": "O3", "inputs": (25.5, 25.5, 5, 50), "expected": "INVALID"},
+    {"id": "EP_TC1", "class": "O4", "inputs": (25.5, 25.5, 2, 110), "expected": "INVALID"},
+    {"id": "EP_TC2", "class": "O5", "inputs": (40.0, 25.5, 2, 50), "expected": "Quá tải trọng"},
+    {"id": "EP_TC3", "class": "O6", "inputs": (2.5, 10.5, 2, 50), "expected": "tổng tiền = 10.5 x (5000 + 2 x 2000) + 50 x 10000 = 594500"},
+    {"id": "EP_TC4", "class": "O7", "inputs": (2.5, 35.0, 2, 50), "expected": "tổng tiền = 35.0 x (5000 + 2 x 2000) + 50 x 10000 - 20000 = 795000"},
+    {"id": "EP_TC5", "class": "O8", "inputs": (17.5, 10.5, 2, 50), "expected": "tổng tiền = 10.5 x (7000 + 2 x 2000) + 50 x 10000 = 615500"},
+    {"id": "EP_TC6", "class": "O9", "inputs": (17.5, 35.0, 2, 50), "expected": "tổng tiền = 35.0 x (7000 + 2 x 2000) + 50 x 10000 - 20000 = 865000"},
+]
+
+# 2.3. Test cases Kiểm thử giá trị biên (BVA)
 bva_test_cases_bai2 = [
     {"id": "BVA_TC1", "inputs": (0.0, 25.5, 2, 50), "expected": "INVALID"},
     {"id": "BVA_TC2", "inputs": (0.1, 25.5, 2, 50), "expected": "tổng tiền = 25.5 x (5000 + 2 x 2000) + 50 x 10000 - 20000 = 709500"},
@@ -149,7 +174,9 @@ if __name__ == "__main__":
     # Bài toán 1
     execute_test_suite("BÀI TOÁN 1 - PHÂN HOẠCH TƯƠNG ĐƯƠNG (EP)", calculate_movie_ticket, ep_test_cases_bai1)
     execute_test_suite("BÀI TOÁN 1 - KIỂM THỬ GIÁ TRỊ BIÊN (BVA)", calculate_movie_ticket, bva_test_cases_bai1)
+    execute_test_suite("BÀI TOÁN 1 - BẢNG QUYẾT ĐỊNH (BQD)", calculate_movie_ticket, bqd_test_cases_bai1)
 
     # Bài toán 2
     execute_test_suite("BÀI TOÁN 2 - PHÂN HOẠCH TƯƠNG ĐƯƠNG (EP)", calculate_shipping_fee, ep_test_cases_bai2)
     execute_test_suite("BÀI TOÁN 2 - KIỂM THỬ GIÁ TRỊ BIÊN (BVA)", calculate_shipping_fee, bva_test_cases_bai2)
+    execute_test_suite("BÀI TOÁN 2 - BẢNG QUYẾT ĐỊNH (BQD)", calculate_shipping_fee, bqd_test_cases_bai2)
