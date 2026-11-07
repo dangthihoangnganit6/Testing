@@ -16,10 +16,7 @@ def normalize_output(text):
         return f"tổng tiền = {amount}"
     return text.strip()
 
-
-# ==============================================================================
 # PHẦN 1: BÀI TOÁN 1 - HỆ THỐNG ĐẶT VÉ XEM PHIM
-# ==============================================================================
 
 # 1.1. Test cases Phân hoạch tương đương (EP)
 ep_test_cases_bai1 = [
@@ -80,9 +77,7 @@ bva_test_cases_bai1 = [
 ]
 
 
-# ==============================================================================
 # PHẦN 2: BÀI TOÁN 2 - HỆ THỐNG TÍNH CƯỚC VẬN CHUYỂN HÀNG
-# ==============================================================================
 
 # 2.1. Test cases Phân hoạch tương đương (EP)
 ep_test_cases_bai2 = [
@@ -144,9 +139,7 @@ bva_test_cases_bai2 = [
 ]
 
 
-# ==============================================================================
 # HÀM THỰC THI KIỂM THỬ CHUNG
-# ==============================================================================
 def execute_test_suite(suite_name, test_func, test_cases):
     print("\n" + "=" * 90)
     print(f"CHẠY BỘ KIỂM THỬ: {suite_name}")
